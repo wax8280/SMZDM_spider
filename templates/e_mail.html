@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body style="font-family: 'Microsoft YaHei';padding:0;border:0;margin:0;">
+
+<div data-role="page">
+
+    <div style="background-color:#e9e9e9;text-decoration:none;border-radius: 3px;padding: 10px;">
+        <h4 style="text-align: center;margin: 0px">快人一步</h4>
+    </div>
+    <div style="background-color: #f6f6f6;text-decoration:none;border-radius: 3px;text-align: center;padding: 5px;">
+        <span style="margin-left: 2em;color: black;"><a style="text-decoration:none;color: black;" href="http://tools.vincentzhong.cn/smzdm/">首页</a></span>
+        <span style="margin-left: 2em;color: black;"><a style="text-decoration:none;color: black;" href="http://tools.vincentzhong.cn/smzdm/case_set/">推送设置</a></span>
+        <span style="margin-left: 2em;color: black;"><a style="text-decoration:none;color: black;" href="http://tools.vincentzhong.cn/smzdm/user_info/">我的信息</a></span>
+    </div>
+    <div style="margin: 12px;">
+        <h4>{{article_title}}</h4>
+        <h6 style="color: darkred">{{article_price}} | {{article_mall}}</h6>
+        <hr style="margin: 20px auto;">
+        <img style="display: block;margin:0 auto;height: auto;max-width: 100%;box-shadow: 1px 1px 10px #999999;" src="{{article_pic}}">
+        <hr style="margin: 20px auto;">
+
+        <small style="margin: 5px auto">{{article_content}}</small>
+        <hr style="margin: 20px auto;">
+        <p style="color: grey;font-size: 12px;">分类：{{cates_str}}</p>
+        <p style="color: grey;font-size: 12px;">来自你的推送ID：{{case_id}}</p>
+        <small style="color: grey;font-size: 12px;"><span>评论：{{article_comment}}</span> | <span>收藏：{{article_collection}}</span> | <span>值：{{worthy_percentage}}%</span> | <span>{{article_data}}</span></small>
+        <p style="text-align: center;padding: 10px;border-radius: 10px;background-color:#f6f6f6;text-decoration:none;box-shadow:2px 2px 5px #777777;">
+            <a data-role="button" href="{{article_url}}" style="text-decoration:none;display: block;font-size: 1.5em;color: #282828">直达链接</a>
+        </p>
+
+    </div>
+
+</div>
+    <div style="background-color: #f6f6f6;text-decoration:none;border-radius: 3px;text-align: center;padding: 5px;">
+        <h3 style="text-align: center"><a href="http://blog.vincentzhong.cn/" style=" text-decoration: none;color: black;"> Author by V.Z </a></h3>
+    </div>
+</body>
+</html>
