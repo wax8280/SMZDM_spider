@@ -26,7 +26,7 @@ class LazyEmailConnection(object):
         self.smtpobj.quit()
 
 
-with codecs.open(r'.\templates\e_mail.html', 'r', 'utf-8') as f:
+with codecs.open(r'./templates/e_mail.html', 'r', 'utf-8') as f:
     lines = f.readlines()
 
 template_email_body = Templite(u"".join(c for c in lines))
