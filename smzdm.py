@@ -99,6 +99,8 @@ def smzdm_start(the_spider):
 
 
 if __name__ == "__main__":
+    db.create_engine(db_username, db_password, db_name)
+
     # while True:
     #     smzdm = SMZDMScrapy()
     #     smzdm_start(smzdm)
@@ -109,9 +111,3 @@ if __name__ == "__main__":
     #         hours = int(time.strftime("%H"))
     #
     #     time.sleep(random.randint(sleep_time[0], sleep_time[1]) - (t2 - t1))
-
-    item_q = Queue()
-    smzdm_spider = SMZDMSpider(item_q)
-    smzdm_spider.start()
-    while True:
-        print item_q.get().keys()

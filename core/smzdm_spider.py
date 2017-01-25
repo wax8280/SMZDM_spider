@@ -9,7 +9,7 @@ from config import urls, sleep_time, working_time
 import threading
 import random
 
-SMZDMScrapyLogger = UsualLogging('SMZDMScrapy')
+SMZDMSpiderLogger = UsualLogging('SMZDMSpider')
 
 
 class SMZDMSpider(threading.Thread):
@@ -92,12 +92,12 @@ class SMZDMSpider(threading.Thread):
 
             is_parse_ok = True if len(item_list) else False
             if is_parse_ok:
-                SMZDMScrapyLogger.info(message="Parse OK.Flag:{}".format(name))
+                SMZDMSpiderLogger.info(message="Parse OK.Flag:{}".format(name))
             else:
-                SMZDMScrapyLogger.warning(message='Cant parsing item(not found any items?) ')
+                SMZDMSpiderLogger.warning(message='Cant parsing item(not found any items?) ')
         except Exception as e:
             traceback.print_exc()
-            SMZDMScrapyLogger.warning(message="Error in SMZDMScrapy.parse_item.ErrInfo: {}".format(str(e)))
+            SMZDMSpiderLogger.warning(message="Error in SMZDMScrapy.parse_item.ErrInfo: {}".format(str(e)))
             is_parse_ok = False
 
         finally:
@@ -111,7 +111,7 @@ class SMZDMSpider(threading.Thread):
             response = common.common_get(url + str(int(time.time()) + 100000))
             item_json = response.json()
         except Exception as e:
-            SMZDMScrapyLogger.warning(message="Error in crawling SMZDM API.ErrInfo: {}".format(str(e)))
+            SMZDMSpiderLogger.warning(message="Error in crawling SMZDM API.ErrInfo: {}".format(str(e)))
 
         return item_json
 
@@ -125,5 +125,15 @@ class SMZDMSpider(threading.Thread):
                 self.out_q.put(item_dict)
                 time.sleep(random.randint(sleep_time[0], sleep_time[1]))
             else:
-                SMZDMScrapyLogger.info(message="Not in working time slepping...")
+                SMZDMSpiderLogger.info(message="Not in working time slepping...")
                 time.sleep(180)
+
+
+if __name__ == '__main__':
+    from Queue import Queue
+
+    item_q = Queue()
+    smzdm_spider = SMZDMSpider(item_q)
+    smzdm_spider.start()
+    while True:
+        print item_q.get().keys()

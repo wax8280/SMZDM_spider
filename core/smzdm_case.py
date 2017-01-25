@@ -4,31 +4,36 @@
 import re
 
 from lib import db
-from smzdm_logger import *
-log_cases = logging.getLogger('[cases]')
-log_cases.setLevel(logging.INFO)
+from smzdm_logger import UsualLogging
+
+SMZDMCaseLogger = UsualLogging('SMZDMCase')
+
+
 
 class CaseOperate(object):
     @staticmethod
     def search_keyword(push_item_list, keyword_list, item_list, target):
         keyword_len = len(keyword_list)
-        # 关键词搜索，并将结果item放入列表中
+        # 遍历爬取的item
         for each_item in item_list:
             try:
                 # 搜索每一个keyword
-                for index, each_keyword in enumerate(keyword_list):
+                for each_keyword in keyword_list:
+                    # 忽略大小写
                     if not re.search(each_keyword, each_item[target], re.IGNORECASE):
                         break
 
-                    if index == keyword_len - 1:
+                    # 如果满足，添加到push_item_list中
+                    if each_keyword == keyword_list[-1]:
                         push_item_list.append(each_item)
             except Exception, e:
-                log_cases.warning("ErrInfo:" + str(e))
+                SMZDMCaseLogger.warning("ErrInfo:" + str(e))
 
     @staticmethod
     def search_keynum(push_item_list, keynum_num, item_list, target, rev=False):
         try:
             for each_item in item_list:
+                # 反向
                 if rev:
                     if each_item[target] < keynum_num:
                         push_item_list.append(each_item)
@@ -36,25 +41,25 @@ class CaseOperate(object):
                     if each_item[target] > keynum_num:
                         push_item_list.append(each_item)
         except Exception, e:
-            log_cases.warning("ErrInfo:" + str(e))
+            SMZDMCaseLogger.warning("ErrInfo:" + str(e))
 
     @staticmethod
     def push_filter(push_item_list, case_id, user_email):
         delete_list = []
         try:
-            push_his_list = db.select(r'select * from smzdm_his where case_id=?', case_id)
             # 过滤已经在push_his，即已经推送过的物品
+            # 限制为最新50条
+            push_his_list = db.select(r'select * from smzdm_his where case_id=? LIMIT=50', case_id)
             for each_push_item in push_item_list:
                 for each_push_his in push_his_list:
-                    if int(each_push_item['article_id']) == int(each_push_his[u'article_id']) and abs(
-                                    each_push_item['timesort'] - each_push_his[u'timesort']) < 1000:
+                    if int(each_push_item['article_id']) == int(each_push_his[u'article_id']):
                         delete_list.append(each_push_item)
                         break
 
             for each in delete_list:
                 push_item_list.remove(each)
         except Exception, e:
-            log_smzdm_scrapy.warning("ErrInfo:" + str(e))
+            SMZDMCaseLogger.warning("ErrInfo:" + str(e))
 
 
 class BaseCase(object):
