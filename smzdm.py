@@ -8,8 +8,9 @@ from core.smzdm_case import *
 from core.smzdm_db import import_db, import_push_his
 from core.smzdm_email import send_email
 from core.smzdm_filter import *
-from core.smzdm_scrapy import SMZDMScrapy
+from core.smzdm_spider import SMZDMSpider
 from lib.my_request import *
+from Queue import Queue
 
 # to debug
 test_list = []
@@ -77,34 +78,40 @@ def filter_send_import(case_list, target, item_dict):
 
 
 def smzdm_start(the_spider):
-    db.create_engine(db_username, db_password, db_name)
-    case_list = db.select(r'select * from smzdm_case_info')
+    # db.create_engine(db_username, db_password, db_name)
+    # case_list = db.select(r'select * from smzdm_case_info')
     item_dict = {}
 
-    for name, url in [('faxian', r'http://faxian.smzdm.com/json_more?timesort='),
+    for flac, url in [('faxian', r'http://faxian.smzdm.com/json_more?timesort='),
                       ('haitao', r'http://haitao.smzdm.com/json_more?timesort='),
                       ('youhui', r'http://www.smzdm.com/youhui/json_more?timesort=')]:
-        the_spider.url = url
-        the_spider.flag = name
-        item_dict[name] = the_spider.parse_item()
+        item_dict[flac] = the_spider.parse_item(flac, url)
 
-    with db.connection():
-        import_db('youhui', item_dict['youhui'])
-        import_db('faxian', item_dict['faxian'])
-        import_db('haitao', item_dict['haitao'])
+    return item_dict
 
-    for each in ['youhui', 'faxian', 'haitao']:
-        filter_send_import(case_list, each, item_dict)
+    # with db.connection():
+    #     import_db('youhui', item_dict['youhui'])
+    #     import_db('faxian', item_dict['faxian'])
+    #     import_db('haitao', item_dict['haitao'])
+    #
+    # for each in ['youhui', 'faxian', 'haitao']:
+    #     filter_send_import(case_list, each, item_dict)
 
 
 if __name__ == "__main__":
+    # while True:
+    #     smzdm = SMZDMScrapy()
+    #     smzdm_start(smzdm)
+    #     hours = int(time.strftime("%H"))
+    #
+    #     while hours >= stop and hours <= stop + 8:
+    #         time.sleep(long_sleep_time)
+    #         hours = int(time.strftime("%H"))
+    #
+    #     time.sleep(random.randint(sleep_time[0], sleep_time[1]) - (t2 - t1))
+
+    item_q = Queue()
+    smzdm_spider = SMZDMSpider(item_q)
+    smzdm_spider.start()
     while True:
-        smzdm = SMZDMScrapy()
-        smzdm_start(smzdm)
-        hours = int(time.strftime("%H"))
-
-        while hours >= stop and hours <= stop + 8:
-            time.sleep(long_sleep_time)
-            hours = int(time.strftime("%H"))
-
-        time.sleep(random.randint(sleep_time[0], sleep_time[1]) - (t2 - t1))
+        print item_q.get().keys()
