@@ -7,6 +7,10 @@ from smzdm_case import TitleCase, CommentCase, CatesstrCase, ArticleMallCase, Rm
 from smzdm_filter import TitleFilter, CommentFilter, CatesstrFilter, ArticlemallFilter, RMBPriceSmallFilter, \
     RMBPriceBigFilter, ArticleWorthyFilter, ArticleUnworthyFilter, WorthyPrecentageFilter, ArticleCollectionFilter, \
     ArticlePriceFilter
+from smzdm_logger import UsualLogging
+import threading
+
+SMZDMSearchLogger = UsualLogging('SMZDMSearch')
 
 
 class SMZDMSearch(threading.Thread):
@@ -21,6 +25,11 @@ class SMZDMSearch(threading.Thread):
     name = [('youhui', 1), ('haitao', 2), ('faxian', 3)]
 
     def __init__(self, in_q, out_q):
+        """
+
+        :param in_q:        json    爬取回来的数据
+        :param out_q:       tuple   ([符合case的json数据],case)
+        """
         super(SMZDMSearch, self).__init__()
         self.in_q = in_q
         self.out_q = out_q
@@ -31,6 +40,7 @@ class SMZDMSearch(threading.Thread):
 
             case_list = db.select(r'select * from smzdm_case_info')
             for each_case in case_list:
+
                 # 符合一个case的item
                 will_push_item_list = []
                 for k, v in SMZDMSearch.name:
@@ -51,5 +61,6 @@ class SMZDMSearch(threading.Thread):
                                 if the_filter.test(each_filter):
                                     the_filter.act(will_push_item_list, each_filter)
 
+                # SMZDMSearchLogger.info(message="Will push item:{} | Case:{}".format(will_push_item_list,each_case))
                 if will_push_item_list:
                     self.out_q.put((will_push_item_list, each_case))

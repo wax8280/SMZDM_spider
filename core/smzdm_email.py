@@ -63,8 +63,9 @@ def _send_mail(to_send_list):
 
             each_item, article_id, case_id, user_name, receivers, content = each_to_send
 
+            # 过滤重复的item
             if article_id in sent_id_list:
-                sent_item_list.append((each_item, case_id))
+                sent_item_list.append(each_item)
                 break
 
             try_time, sended = 0, False
@@ -85,13 +86,18 @@ def _send_mail(to_send_list):
                         "Send to:" + user_name + '|E-Mail:' + receivers + '|Push id:' + str(
                             case_id) + '|Article ID:' + article_id)
                     sent_id_list.add(article_id)
-                    sent_item_list.append((each_item, case_id))
+                    sent_item_list.append(each_item)
 
         return sent_item_list
 
 
 class SMZDMEmail(threading.Thread):
     def __init__(self, in_q, out_q):
+        """
+
+        :param in_q:        tuple   ([符合case的json数据],case)
+        :param out_q:       tuple   ([发送成功的item],case)
+        """
         super(SMZDMEmail, self).__init__()
         self.in_q = in_q
         self.out_q = out_q
@@ -101,4 +107,4 @@ class SMZDMEmail(threading.Thread):
             will_push_item_list, each_case = self.in_q.get()
             to_send_list = _make_content(will_push_item_list, each_case)
             sent_item_list = _send_mail(to_send_list)
-            self.out_q.put(sent_item_list)
+            self.out_q.put((sent_item_list, each_case))

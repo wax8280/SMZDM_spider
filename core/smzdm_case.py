@@ -49,7 +49,7 @@ class CaseOperate(object):
         try:
             # 过滤已经在push_his，即已经推送过的物品
             # 限制为最新50条
-            push_his_list = db.select(r'select * from smzdm_his where case_id=? LIMIT=50', case_id)
+            push_his_list = db.select(r'select * from smzdm_his where case_id=? LIMIT 50', case_id)
             for each_push_item in push_item_list:
                 for each_push_his in push_his_list:
                     if int(each_push_item['article_id']) == int(each_push_his[u'article_id']):

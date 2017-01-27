@@ -110,6 +110,7 @@ class ArticlemallFilter(FilterBase):
 
 
 class RMBPriceSmallFilter(FilterBase):
+    # 过滤小的
     TYPE_NUM = 5
     TYPE_KEY = 'rmb_price'
 

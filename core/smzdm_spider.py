@@ -16,6 +16,10 @@ class SMZDMSpider(threading.Thread):
     urls = urls
 
     def __init__(self, out_q):
+        """
+
+        :param out_q:       [json]
+        """
         super(SMZDMSpider, self).__init__()
         self.out_q = out_q
 
